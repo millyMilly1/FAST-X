@@ -6,6 +6,7 @@
   <title>Fast X Nexus Services</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
     :root {
       --green: #1E7A4E;
@@ -75,12 +76,18 @@
 
     /* ── HERO ── */
     .hero {
-      min-height: 100vh;
-      background: linear-gradient(135deg, #0d4a2e 0%, #1E7A4E 50%, #2a9d66 100%);
-      position: relative;
-      display: flex; align-items: center;
-      overflow: hidden;
-    }
+  min-height: 100vh;
+  background-image: 
+    linear-gradient(135deg, rgba(13, 74, 46, 0.65) 0%, rgba(30, 122, 78, 0.55) 50%, rgba(42, 157, 102, 0.45) 100%),
+    url('/images/herosection.png');   /* ← Your PNG path here */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
     .hero-bg-pattern {
       position: absolute; inset: 0;
       background-image:
@@ -290,6 +297,42 @@
       padding-top: 24px; text-align: center; font-size: 0.82rem;
     }
 
+
+    /* SOCIAL SECTION STYLING */
+.footer-social {
+  margin-top: 20px;
+}
+
+.footer-social h4 {
+  color: white;
+  margin-bottom: 12px;
+  font-size: 0.9rem;
+}
+
+.social-icons {
+  display: flex;
+  gap: 18px;
+}
+
+.social-link {
+  font-size: 28px;
+  color: #1E7A4E;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  color: #F4C63C;
+  transform: translateY(-3px) scale(1.15);
+}
+
+/* If your footer-grid is still set to 3 columns, update it to 4 */
+.footer-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); /* or repeat(4, 1fr) if you prefer fixed */
+}   
+
+
+        
+
     /*signature*/
       #signature {
     /* This removes the default blue/purple colors in ALL states */
@@ -350,7 +393,7 @@
 <!-- NAV -->
 <nav>
   <a href="/" class="logo">
-    <div class="logo-icon">⚡</div>
+    <div class="logo-icon"></div>
     FAST X NEXUS
   </a>
   <div class="nav-links">
@@ -554,9 +597,30 @@
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <h3>⚡ Fast X Nexus Services</h3>
+      <h3>Fast X Nexus Services</h3>
       <p>Lagos' most reliable okada delivery network. From your doorstep to anywhere in Lagos — sharp-sharp, no dulling. We move, so you don't have to.</p>
+    
+    <!-- 🔥 NEW SOCIAL SECTION STARTS RIGHT HERE (underneath footer-brand) -->
+      <div class="footer-social">
+        <h4>Check Our Socials</h4>
+        <div class="social-icons">
+          <a href="https://www.tiktok.com/@fastnexusservices?_r=1&_t=ZS-94r2Sk9JB2r" target="_blank" class="social-link" title="TikTok">
+            <i class="fa-brands fa-tiktok"></i>
+          </a>
+          <a href="https://www.facebook.com/share/r/1CML5X5AgX/?mibextid=wwXIfr" target="_blank" class="social-link" title="Facebook">
+            <i class="fa-brands fa-facebook"></i>
+          </a>
+          <a href="https://x.com/fastnexuss5693?s=21" target="_blank" class="social-link" title="X (Twitter)">
+            <i class="fa-brands fa-x-twitter"></i>
+          </a>
+          <a href="https://www.instagram.com/fastxnexusservices?igsh=c2lpbjMyamk3ZWY4" target="_blank" class="social-link" title="Instagram">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+        </div>
+      </div>
+      <!-- 🔥 NEW SOCIAL SECTION ENDS HERE -->
     </div>
+
     <div class="footer-col">
       <h4>Quick Links</h4>
       <a href="/order">Send a Package</a>
@@ -570,6 +634,16 @@
       <a href="/order">Sharp-Sharp Express</a>
       <a href="/order">Same-Day Delivery</a>
     </div>
+        <div class="footer-col">
+      <h4>Enquiries & Partnerships</h4>
+      <a href="mailto:fastxnexusservices@gmail.com?subject=Enquiry%20/%20Partnership%20-%20Fast%20X%20Nexus" style="display:flex; align-items:center; gap:10px; color:#F4C63C; font-weight:600; font-size:1.05rem; margin:12px 0;">
+        <i class="fa-solid fa-envelope"></i> 
+        hello@fastxnexus.com
+      </a>
+      <p style="font-size:0.85rem; color:rgba(255,255,255,0.5); line-height:1.5; margin-top:8px;">
+        Business proposals, corporate deliveries, rider fleet partnerships, vendor collaborations — we dey listen!
+      </p>
+    </div>
   </div>
   <div class="footer-bottom">
     <p>© 2026 <a href="https://wa.me/+2349060609780?text=Hello!%20I%20want%20to%20build%20an%20Application/Website."  target="_blank" rel="noopener" id="signature"> HENRY-CHUKWURA </a> </p>
@@ -578,9 +652,8 @@
 
 <!-- WHATSAPP FLOAT -->
 <a href="https://wa.me/+2349113625233?text=Hello!%20I%20need%20help%20with%20a%20delivery." class="whatsapp-float" target="_blank" rel="noopener">
-  <span class="whatsapp-icon">💬</span>
-  Chat with us
-</a>
+  <span class="whatsapp-icon"><img src="/images/whatsapp_icon.png" 
+        alt="WhatsApp" style="width:18px; height:18px;"></span>Chat with us</a>
 
 </body>
 </html>
