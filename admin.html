@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Fast X Nexus Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #1E7A4E; --green-dark: #155c3a; --green-light: #e8f5ed;
+      --gold: #F4C63C; --gold-dark: #d4a520;
+      --white: #ffffff; --grey: #f0f4f1; --text: #111111; --muted: #6b7280;
+      --border: #e5e7eb; --error: #dc2626;
+      --sidebar-bg: #0d3320;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--grey); }
+    h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
+
+    /* LAYOUT */
+    .admin-layout { display: flex; min-height: 100vh; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 240px; background: var(--sidebar-bg);
+      color: white; padding: 0; flex-shrink: 0;
+      display: flex; flex-direction: column;
+    }
+    .sidebar-logo {
+      padding: 24px 20px; display: flex; align-items: center; gap: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-logo-icon {
+      width: 36px; height: 36px; background: var(--green);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .sidebar-logo-text { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 800; }
+    .sidebar-logo-sub { font-size: 0.7rem; color: rgba(255,255,255,0.4); }
+    .sidebar-nav { padding: 16px 12px; flex: 1; }
+    .sidebar-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.8px;
+      color: rgba(255,255,255,0.3); margin: 16px 8px 6px; }
+    .sidebar-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px; border-radius: 8px; cursor: pointer;
+      color: rgba(255,255,255,0.6); font-size: 0.88rem;
+      text-decoration: none; transition: all 0.2s; margin-bottom: 2px;
+    }
+    .sidebar-item:hover, .sidebar-item.active {
+      background: rgba(255,255,255,0.1); color: white;
+    }
+    .sidebar-item.active { background: var(--green); color: white; }
+    .sidebar-badge {
+      margin-left: auto; background: var(--gold); color: var(--green-dark);
+      font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 50px;
+    }
+    .sidebar-footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .sidebar-footer a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.8rem; }
+    .sidebar-footer a:hover { color: white; }
+
+    /* MAIN */
+    .main-content { flex: 1; overflow-y: auto; }
+
+    /* TOPBAR */
+    .topbar {
+      background: white; border-bottom: 1px solid var(--border);
+      padding: 16px 28px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .topbar-title { font-family: 'Syne', sans-serif; font-size: 1.25rem; font-weight: 800; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .refresh-btn {
+      display: flex; align-items: center; gap: 6px;
+      padding: 9px 18px; background: var(--green-light); color: var(--green);
+      border: 1px solid rgba(30,122,78,0.2); border-radius: 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .refresh-btn:hover { background: var(--green); color: white; }
+    .refresh-icon { transition: transform 0.5s; }
+    .refresh-icon.spinning { animation: spin 0.5s linear; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .last-updated { font-size: 0.78rem; color: var(--muted); }
+    .admin-badge {
+      background: var(--green); color: white; padding: 5px 12px;
+      border-radius: 50px; font-size: 0.75rem; font-weight: 600;
+    }
+
+    /* CONTENT */
+    .content { padding: 24px 28px; }
+
+    /* STATS GRID */
+    .stats-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card {
+      background: white; border-radius: 12px; padding: 20px 18px;
+      border: 1px solid var(--border);
+    }
+    .stat-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .stat-num {
+      font-family: 'Syne', sans-serif; font-size: 1.8rem;
+      font-weight: 800; color: var(--text);
+    }
+    .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .stat-card.green { border-left: 3px solid var(--green); }
+    .stat-card.gold { border-left: 3px solid var(--gold); }
+    .stat-card.blue { border-left: 3px solid #3b82f6; }
+    .stat-card.purple { border-left: 3px solid #8b5cf6; }
+    .stat-card.teal { border-left: 3px solid #14b8a6; }
+
+    /* FILTER BAR */
+    .filter-bar {
+      background: white; border-radius: 12px; padding: 16px 20px;
+      border: 1px solid var(--border); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .filter-bar input {
+      padding: 9px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+      flex: 1; min-width: 200px;
+    }
+    .filter-bar input:focus { outline: none; border-color: var(--green); }
+    .filter-select {
+      padding: 9px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+      cursor: pointer; background: white;
+    }
+    .filter-select:focus { outline: none; border-color: var(--green); }
+    .order-count { font-size: 0.82rem; color: var(--muted); margin-left: auto; }
+
+    /* TABLE */
+    .table-container {
+      background: white; border-radius: 14px; border: 1px solid var(--border);
+      overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: #f8faf9; }
+    th {
+      padding: 12px 16px; text-align: left;
+      font-size: 0.75rem; font-weight: 600; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 14px 16px; border-bottom: 1px solid #f3f4f6;
+      font-size: 0.88rem; vertical-align: top;
+    }
+    tr:last-child td { border: none; }
+    tr:hover td { background: #fafdfb; }
+
+    /* ORDER ID */
+    .order-id-link {
+      font-family: 'Syne', sans-serif; font-weight: 700; color: var(--green);
+      text-decoration: none; font-size: 0.9rem;
+    }
+    .order-id-link:hover { text-decoration: underline; }
+
+    /* STATUS BADGE */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 50px;
+      font-size: 0.75rem; font-weight: 600; white-space: nowrap;
+    }
+    .badge-Pending { background: #fef3c7; color: #92400e; }
+    .badge-Pickup-Requested { background: #dbeafe; color: #1e40af; }
+    .badge-Picked-Up { background: #e0e7ff; color: #3730a3; }
+    .badge-In-Transit { background: #d1fae5; color: #065f46; }
+    .badge-Delivered { background: #d1fae5; color: #065f46; border: 1px solid #6ee7b7; }
+    .badge-Cancelled { background: #fee2e2; color: #991b1b; }
+
+    /* STATUS DROPDOWN */
+    .status-select {
+      padding: 6px 10px; border: 1.5px solid var(--border);
+      border-radius: 6px; font-family: 'DM Sans', sans-serif; font-size: 0.82rem;
+      cursor: pointer; background: white; min-width: 140px;
+      transition: border-color 0.2s;
+    }
+    .status-select:focus { outline: none; border-color: var(--green); }
+    .status-select:hover { border-color: var(--green); }
+
+    .update-btn {
+      padding: 6px 14px; background: var(--green); color: white;
+      border: none; border-radius: 6px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .update-btn:hover { background: var(--green-dark); }
+    .update-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .update-btn.saving { background: #6b7280; }
+
+    .address-text { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .item-text { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .time-text { font-size: 0.75rem; color: var(--muted); }
+    .service-chip {
+      display: inline-block; padding: 2px 8px; border-radius: 4px;
+      font-size: 0.72rem; font-weight: 600;
+    }
+    .chip-standard { background: #f3f4f6; color: #374151; }
+    .chip-sharp-sharp { background: #fef3c7; color: #92400e; }
+    .chip-same-day { background: #e0e7ff; color: #3730a3; }
+
+    /* UPDATE TOAST */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--green); color: white; padding: 12px 24px;
+      border-radius: 50px; font-size: 0.88rem; font-weight: 600;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15); z-index: 9999;
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .toast.show { opacity: 1; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+      z-index: 1000; display: none; align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: white; border-radius: 20px; padding: 32px;
+      max-width: 560px; width: 90%; max-height: 85vh; overflow-y: auto;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted);
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal h3 { font-size: 1.2rem; margin-bottom: 20px; }
+    .modal-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 12px 0; border-bottom: 1px solid var(--border); gap: 16px;
+    }
+    .modal-row:last-child { border: none; }
+    .modal-label { font-size: 0.8rem; color: var(--muted); font-weight: 500; width: 120px; flex-shrink: 0; }
+    .modal-value { font-size: 0.9rem; color: var(--text); font-weight: 500; text-align: right; }
+
+    /* LOADING */
+    .loading {
+      text-align: center; padding: 48px; color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .spinner { font-size: 2rem; animation: spin 1s linear infinite; margin-bottom: 8px; }
+
+    /* EMPTY */
+    .empty { text-align: center; padding: 48px; color: var(--muted); }
+    .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+
+    @media (max-width: 900px) {
+      .sidebar { display: none; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .content { padding: 16px; }
+      .topbar { padding: 14px 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">⚡</div>
+      <div>
+        <div class="sidebar-logo-text">FAST X NEXUS</div>
+        <div class="sidebar-logo-sub">Admin Panel</div>
+      </div>
+    </div>
+    <div class="sidebar-nav">
+      <div class="sidebar-label">Main</div>
+      <a class="sidebar-item active" href="/admin">📊 Dashboard</a>
+      <a class="sidebar-item" href="/admin" onclick="filterByStatus('all')">📦 All Orders</a>
+      <a class="sidebar-item" href="/admin" onclick="filterByStatus('Pending')">⏳ Pending <span class="sidebar-badge" id="sb-pending">0</span></a>
+      <a class="sidebar-item" href="/admin" onclick="filterByStatus('In Transit')">🚀 In Transit</a>
+      <a class="sidebar-item" href="/admin" onclick="filterByStatus('Delivered')">✅ Delivered</a>
+      <div class="sidebar-label">Quick</div>
+      <a class="sidebar-item" href="/" target="_blank">🌐 View Website</a>
+      <a class="sidebar-item" href="/order" target="_blank">➕ New Order</a>
+      <a class="sidebar-item" href="/track" target="_blank">🔍 Track Order</a>
+    </div>
+    <div class="sidebar-footer">
+      <a href="/">← Back to site</a>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-content">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-title">📊 Delivery Dashboard</div>
+      <div class="topbar-right">
+        <span class="last-updated" id="last-updated">Loading...</span>
+        <button class="refresh-btn" onclick="loadData()">
+          <span class="refresh-icon" id="refresh-icon">🔄</span> Refresh
+        </button>
+        <span class="admin-badge">ADMIN</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- STATS -->
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card green"><div class="stat-icon">📦</div><div class="stat-num" id="st-total">—</div><div class="stat-label">Total Orders</div></div>
+        <div class="stat-card gold"><div class="stat-icon">📅</div><div class="stat-num" id="st-today">—</div><div class="stat-label">Today's Orders</div></div>
+        <div class="stat-card blue"><div class="stat-icon">⏳</div><div class="stat-num" id="st-pending">—</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card purple"><div class="stat-icon">🚀</div><div class="stat-num" id="st-transit">—</div><div class="stat-label">In Transit</div></div>
+        <div class="stat-card teal"><div class="stat-icon">💰</div><div class="stat-num" id="st-revenue">—</div><div class="stat-label">Today's Revenue</div></div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filter-bar">
+        <input type="text" id="search-input" placeholder="🔍 Search by ID, name, address, or phone..." oninput="filterOrders()" />
+        <select class="filter-select" id="status-filter" onchange="filterOrders()">
+          <option value="all">All Statuses</option>
+          <option value="Pending">⏳ Pending</option>
+          <option value="Pickup Requested">📲 Pickup Requested</option>
+          <option value="Picked Up">🏍️ Picked Up</option>
+          <option value="In Transit">🚀 In Transit</option>
+          <option value="Delivered">✅ Delivered</option>
+          <option value="Cancelled">❌ Cancelled</option>
+        </select>
+        <select class="filter-select" id="service-filter" onchange="filterOrders()">
+          <option value="all">All Services</option>
+          <option value="standard">📦 Standard</option>
+          <option value="sharp-sharp">⚡ Sharp-Sharp</option>
+          <option value="same-day">🚀 Same-Day</option>
+        </select>
+        <span class="order-count" id="order-count">— orders</span>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-container">
+        <div id="table-content">
+          <div class="loading"><div class="spinner">⏳</div><div>Loading orders, sharp-sharp...</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ORDER DETAIL MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal-content">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <h3>📦 Order Details</h3>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  let allOrders = [];
+  let statuses = [];
+  let currentFilter = 'all';
+
+  async function loadData() {
+    const icon = document.getElementById('refresh-icon');
+    icon.classList.add('spinning');
+    try {
+      const [ordersRes, statsRes, statusRes] = await Promise.all([
+        fetch('/api/orders'),
+        fetch('/api/stats'),
+        fetch('/api/services'),
+      ]);
+      const ordersData = await ordersRes.json();
+      const statsData = await statsRes.json();
+
+      allOrders = ordersData.data;
+      statuses = ['Pending', 'Pickup Requested', 'Picked Up', 'In Transit', 'Delivered', 'Cancelled'];
+      renderStats(statsData.data);
+      renderTable(allOrders);
+      document.getElementById('last-updated').textContent = 'Updated: ' + new Date().toLocaleTimeString('en-NG');
+      document.getElementById('sb-pending').textContent = statsData.data.pending;
+    } catch (e) {
+      document.getElementById('table-content').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div>Failed to load orders. Refresh to try again.</div></div>`;
+    } finally {
+      setTimeout(() => icon.classList.remove('spinning'), 600);
+    }
+  }
+
+  function renderStats(stats) {
+    document.getElementById('st-total').textContent = stats.total;
+    document.getElementById('st-today').textContent = stats.today;
+    document.getElementById('st-pending').textContent = stats.pending;
+    document.getElementById('st-transit').textContent = stats.inTransit;
+    document.getElementById('st-revenue').textContent = '₦' + stats.todayRevenue.toLocaleString();
+  }
+
+  function getFilteredOrders() {
+    const search = document.getElementById('search-input').value.toLowerCase();
+    const statusF = document.getElementById('status-filter').value;
+    const serviceF = document.getElementById('service-filter').value;
+    return allOrders.filter(o => {
+      const matchSearch = !search || [o.id, o.customerName, o.phone, o.pickupAddress, o.dropoffAddress, o.itemDescription]
+        .some(f => f && f.toLowerCase().includes(search));
+      const matchStatus = statusF === 'all' || o.status === statusF;
+      const matchService = serviceF === 'all' || o.serviceType === serviceF;
+      return matchSearch && matchStatus && matchService;
+    });
+  }
+
+  function filterOrders() { renderTable(getFilteredOrders()); }
+  function filterByStatus(s) {
+    document.getElementById('status-filter').value = s;
+    filterOrders();
+  }
+
+  function renderTable(orders) {
+    document.getElementById('order-count').textContent = orders.length + ' order' + (orders.length !== 1 ? 's' : '');
+    if (orders.length === 0) {
+      document.getElementById('table-content').innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div>No orders match your filter, oga!</div></div>`;
+      return;
+    }
+    const serviceChip = { 'standard': 'chip-standard', 'sharp-sharp': 'chip-sharp-sharp', 'same-day': 'chip-same-day' };
+    const serviceLabel = { 'standard': '📦 Standard', 'sharp-sharp': '⚡ Sharp-Sharp', 'same-day': '🚀 Same-Day' };
+
+    document.getElementById('table-content').innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Pickup → Drop-off</th>
+            <th>Item</th>
+            <th>Service</th>
+            <th>Price</th>
+            <th>Current Status</th>
+            <th>Update Status</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${orders.map(o => `
+            <tr>
+              <td>
+                <a class="order-id-link" onclick="showModal('${o.id}')" href="#">${o.id}</a>
+              </td>
+              <td>
+                <div style="font-weight:500;">${o.customerName}</div>
+                <div style="font-size:0.75rem;color:var(--muted);">${o.phone}</div>
+              </td>
+              <td>
+                <div class="address-text" title="${o.pickupAddress}">📍 ${o.pickupAddress}</div>
+                <div class="address-text" style="color:var(--muted);" title="${o.dropoffAddress}">→ ${o.dropoffAddress}</div>
+              </td>
+              <td>
+                <div class="item-text" title="${o.itemDescription}">${o.itemDescription}</div>
+                <div style="font-size:0.72rem;color:var(--muted);">${o.weight}kg · ${o.size}</div>
+              </td>
+              <td><span class="service-chip ${serviceChip[o.serviceType] || ''}">${serviceLabel[o.serviceType] || o.serviceType}</span></td>
+              <td style="font-weight:600;color:var(--green);">₦${o.price.toLocaleString()}</td>
+              <td>
+                <span class="badge badge-${o.status.replace(/ /g,'-')}">${getBadgeEmoji(o.status)} ${o.status}</span>
+              </td>
+              <td>
+                <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+                  <select class="status-select" id="sel-${o.id}" onchange="">
+                    ${statuses.map(s => `<option value="${s}" ${s===o.status?'selected':''}>${s}</option>`).join('')}
+                  </select>
+                  <button class="update-btn" id="btn-${o.id}" onclick="updateStatus('${o.id}')">Save</button>
+                </div>
+              </td>
+              <td>
+                <div class="time-text">${formatDate(o.createdAt)}</div>
+                <div class="time-text" style="color:var(--muted);">${timeAgo(o.createdAt)}</div>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  function getBadgeEmoji(status) {
+    const map = { 'Pending':'⏳','Pickup Requested':'📲','Picked Up':'🏍️','In Transit':'🚀','Delivered':'✅','Cancelled':'❌' };
+    return map[status] || '📦';
+  }
+
+  async function updateStatus(orderId) {
+    const select = document.getElementById('sel-' + orderId);
+    const btn = document.getElementById('btn-' + orderId);
+    const newStatus = select.value;
+    btn.disabled = true; btn.classList.add('saving'); btn.textContent = '...';
+    try {
+      const res = await fetch('/api/orders/' + orderId + '/status', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Update local data
+        const idx = allOrders.findIndex(o => o.id === orderId);
+        if (idx !== -1) allOrders[idx] = data.data;
+        renderTable(getFilteredOrders());
+        showToast('✅ Status updated to "' + newStatus + '" — sharp-sharp!');
+        // Re-render stats
+        const statsRes = await fetch('/api/stats');
+        const statsData = await statsRes.json();
+        renderStats(statsData.data);
+        document.getElementById('sb-pending').textContent = statsData.data.pending;
+      } else {
+        showToast('❌ ' + (data.message || 'Update failed'), true);
+        btn.disabled = false; btn.classList.remove('saving'); btn.textContent = 'Save';
+      }
+    } catch (e) {
+      showToast('❌ Network error!', true);
+      btn.disabled = false; btn.classList.remove('saving'); btn.textContent = 'Save';
+    }
+  }
+
+  function showModal(orderId) {
+    const o = allOrders.find(x => x.id === orderId);
+    if (!o) return;
+    const serviceLabel = { 'standard':'📦 Standard','sharp-sharp':'⚡ Sharp-Sharp','same-day':'🚀 Same-Day' };
+    const rows = [
+      ['Order ID', o.id],
+      ['Status', `<span class="badge badge-${o.status.replace(/ /g,'-')}">${getBadgeEmoji(o.status)} ${o.status}</span>`],
+      ['Customer', o.customerName],
+      ['Phone', o.phone],
+      ['Service', serviceLabel[o.serviceType] || o.serviceType],
+      ['Est. Time', o.estimatedTime],
+      ['Price', '₦' + o.price.toLocaleString()],
+      ['Pickup', o.pickupAddress],
+      ['Drop-off', o.dropoffAddress],
+      ['Item', o.itemDescription],
+      ['Weight', o.weight + ' kg · ' + o.size],
+      ['Has Image', o.hasImage ? '📸 Yes' : '—'],
+      ['Created', formatDate(o.createdAt) + ' (' + timeAgo(o.createdAt) + ')'],
+      ['Updated', formatDate(o.updatedAt)],
+    ];
+    document.getElementById('modal-body').innerHTML = rows.map(([l, v]) =>
+      `<div class="modal-row"><span class="modal-label">${l}</span><span class="modal-value">${v}</span></div>`
+    ).join('');
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+  function closeModal(e) { if (e.target === document.getElementById('modal-overlay')) closeModalDirect(); }
+  function closeModalDirect() { document.getElementById('modal-overlay').classList.remove('open'); }
+
+  function showToast(msg, error = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = error ? '#dc2626' : 'var(--green)';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  function formatDate(iso) {
+    return new Date(iso).toLocaleString('en-NG', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+  }
+
+  function timeAgo(iso) {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return mins + 'm ago';
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return hrs + 'h ago';
+    return Math.floor(hrs / 24) + 'd ago';
+  }
+
+  // Initial load
+  loadData();
+  // Auto-refresh every 30s
+  setInterval(loadData, 30000);
+</script>
+</body>
+</html>

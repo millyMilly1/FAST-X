@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fast X Nexus Services — Lagos Delivery, Sharp-Sharp!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #1E7A4E;
+      --green-dark: #155c3a;
+      --green-light: #e8f5ed;
+      --gold: #F4C63C;
+      --gold-dark: #d4a520;
+      --white: #ffffff;
+      --grey: #f7f7f5;
+      --text: #111111;
+      --muted: #6b7280;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+    h1, h2, h3 { font-family: 'Syne', sans-serif; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 5%;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(30,122,78,0.1);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Syne', sans-serif;
+      font-size: 1.25rem; font-weight: 800;
+      color: var(--green);
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 36px; height: 36px; background: var(--green);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a {
+      color: var(--text); text-decoration: none;
+      font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--green); }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.2s; border: none;
+    }
+    .btn-primary { background: var(--green); color: white; }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(30,122,78,0.3); }
+    .btn-gold { background: var(--gold); color: var(--green-dark); }
+    .btn-gold:hover { background: var(--gold-dark); transform: translateY(-1px); box-shadow: 0 4px 20px rgba(244,198,60,0.4); }
+    .btn-outline { background: transparent; color: var(--green); border: 2px solid var(--green); }
+    .btn-outline:hover { background: var(--green); color: white; }
+    .btn-lg { padding: 16px 36px; font-size: 1.05rem; border-radius: 10px; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0d4a2e 0%, #1E7A4E 50%, #2a9d66 100%);
+      position: relative;
+      display: flex; align-items: center;
+      overflow: hidden;
+    }
+    .hero-bg-pattern {
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(244,198,60,0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 50%);
+    }
+    /* Lagos skyline SVG silhouette */
+    .skyline {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 200px; opacity: 0.18;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 1200px; margin: 0 auto;
+      padding: 120px 5% 80px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(244,198,60,0.2); border: 1px solid rgba(244,198,60,0.4);
+      color: var(--gold); padding: 6px 14px; border-radius: 50px;
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.5px;
+      margin-bottom: 20px; text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      color: white; line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--gold); }
+    .hero-sub {
+      color: rgba(255,255,255,0.8);
+      font-size: 1.1rem; line-height: 1.7;
+      margin-bottom: 36px;
+    }
+    .hero-ctas { display: flex; gap: 14px; flex-wrap: wrap; }
+    .hero-stats {
+      display: flex; gap: 32px; margin-top: 48px;
+    }
+    .stat { color: white; }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.8rem; font-weight: 800; color: var(--gold);
+    }
+    .stat-label { font-size: 0.8rem; color: rgba(255,255,255,0.7); }
+
+    /* okada card on right */
+    .hero-visual {
+      display: flex; justify-content: center; align-items: center;
+    }
+    .okada-card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 20px; padding: 32px;
+      text-align: center; color: white;
+      max-width: 340px; width: 100%;
+      animation: float 4s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    .okada-emoji { font-size: 5rem; margin-bottom: 16px; display: block; }
+    .okada-card h3 { font-size: 1.3rem; margin-bottom: 8px; }
+    .okada-card p { font-size: 0.9rem; opacity: 0.8; line-height: 1.6; }
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(244,198,60,0.2); border: 1px solid var(--gold);
+      color: var(--gold); padding: 4px 12px; border-radius: 50px;
+      font-size: 0.75rem; font-weight: 600; margin-top: 16px;
+    }
+    .live-dot {
+      width: 6px; height: 6px; background: var(--gold);
+      border-radius: 50%; animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.4); }
+    }
+
+    /* ── SECTION COMMON ── */
+    section { padding: 80px 5%; }
+    .section-header { text-align: center; margin-bottom: 56px; }
+    .section-tag {
+      display: inline-block;
+      background: var(--green-light); color: var(--green);
+      padding: 4px 14px; border-radius: 50px;
+      font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.5px; text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .section-header h2 {
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      color: var(--text);
+    }
+    .section-header p { color: var(--muted); margin-top: 12px; font-size: 1.05rem; }
+
+    /* ── HOW IT WORKS ── */
+    .how { background: var(--grey); }
+    .steps {
+      max-width: 900px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute; top: 36px; left: 12.5%; right: 12.5%;
+      height: 2px; background: linear-gradient(90deg, var(--green), var(--gold));
+      z-index: 0;
+    }
+    .step { text-align: center; padding: 0 12px; }
+    .step-num {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: white; border: 3px solid var(--green);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 16px; font-size: 1.8rem;
+      position: relative; z-index: 1;
+      box-shadow: 0 4px 16px rgba(30,122,78,0.15);
+    }
+    .step h4 { font-family: 'Syne', sans-serif; font-size: 1rem; margin-bottom: 8px; }
+    .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+
+    /* ── SERVICES ── */
+    .services-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 24px; max-width: 1100px; margin: 0 auto;
+    }
+    .service-card {
+      border: 2px solid #e5e7eb; border-radius: 16px;
+      padding: 32px 28px; background: white;
+      transition: all 0.3s; cursor: pointer; position: relative;
+    }
+    .service-card:hover {
+      border-color: var(--green);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(30,122,78,0.12);
+    }
+    .service-card.featured {
+      border-color: var(--gold); background: #fffdf0;
+    }
+    .service-card.featured::after {
+      content: '🔥 Popular';
+      position: absolute; top: -12px; right: 20px;
+      background: var(--gold); color: var(--green-dark);
+      font-size: 0.75rem; font-weight: 700;
+      padding: 4px 12px; border-radius: 50px;
+    }
+    .service-emoji { font-size: 2.5rem; margin-bottom: 12px; display: block; }
+    .service-name { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: var(--green); }
+    .service-tagline { color: var(--muted); font-size: 0.88rem; margin: 4px 0 12px; }
+    .service-price {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem; font-weight: 800; color: var(--text);
+    }
+    .service-price span { font-size: 0.9rem; color: var(--muted); font-weight: 400; font-family: 'DM Sans', sans-serif; }
+    .service-time {
+      display: inline-flex; align-items: center; gap: 4px;
+      margin: 8px 0 14px; color: var(--green);
+      font-size: 0.85rem; font-weight: 600;
+    }
+    .service-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── TRUST ── */
+    .trust { background: var(--green); }
+    .trust .section-header h2 { color: white; }
+    .trust .section-header p { color: rgba(255,255,255,0.7); }
+    .trust-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 24px; max-width: 1100px; margin: 0 auto;
+    }
+    .trust-card {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px; padding: 28px 20px; text-align: center;
+      color: white;
+    }
+    .trust-icon { font-size: 2rem; margin-bottom: 12px; }
+    .trust-card h4 { font-family: 'Syne', sans-serif; font-size: 1rem; margin-bottom: 8px; }
+    .trust-card p { font-size: 0.85rem; opacity: 0.75; line-height: 1.5; }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--gold) 0%, #f8d96e 100%);
+      padding: 64px 5%; text-align: center;
+    }
+    .cta-banner h2 { color: var(--green-dark); font-size: clamp(1.8rem, 3.5vw, 2.5rem); margin-bottom: 12px; }
+    .cta-banner p { color: var(--green-dark); opacity: 0.8; margin-bottom: 32px; font-size: 1.05rem; }
+    .cta-btns { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #0a2e1a; color: rgba(255,255,255,0.7);
+      padding: 48px 5% 24px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
+      gap: 48px; margin-bottom: 40px;
+    }
+    .footer-brand h3 { color: white; font-family: 'Syne', sans-serif; font-size: 1.2rem; margin-bottom: 8px; }
+    .footer-brand p { font-size: 0.88rem; line-height: 1.7; }
+    .footer-col h4 { color: white; font-size: 0.9rem; font-weight: 600; margin-bottom: 16px; }
+    .footer-col a { display: block; color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.88rem; margin-bottom: 8px; }
+    .footer-col a:hover { color: var(--gold); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 24px; text-align: center; font-size: 0.82rem;
+    }
+
+    /* ── WHATSAPP FLOAT ── */
+    .whatsapp-float {
+      position: fixed; bottom: 28px; right: 28px;
+      z-index: 999;
+      background: #25D366; color: white;
+      border-radius: 50px; padding: 12px 20px;
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; font-size: 0.9rem;
+      text-decoration: none;
+      box-shadow: 0 4px 24px rgba(37,211,102,0.4);
+      transition: all 0.2s;
+      animation: wiggle 3s ease-in-out infinite;
+    }
+    .whatsapp-float:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 32px rgba(37,211,102,0.6);
+    }
+    @keyframes wiggle {
+      0%, 90%, 100% { transform: rotate(0deg); }
+      92% { transform: rotate(-8deg); }
+      96% { transform: rotate(8deg); }
+    }
+    .whatsapp-icon { font-size: 1.3rem; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero-content { grid-template-columns: 1fr; text-align: center; }
+      .hero-ctas { justify-content: center; }
+      .hero-stats { justify-content: center; }
+      .hero-visual { display: none; }
+      .steps { grid-template-columns: repeat(2, 1fr); }
+      .steps::before { display: none; }
+      .services-grid { grid-template-columns: 1fr; }
+      .trust-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+      nav .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="logo">
+    <div class="logo-icon">⚡</div>
+    FAST X NEXUS
+  </a>
+  <div class="nav-links">
+    <a href="#how">How It Works</a>
+    <a href="#services">Services</a>
+    <a href="/track">Track Order</a>
+    <a href="/admin" style="color:var(--green); font-weight:600;">Admin</a>
+  </div>
+  <a href="/order" class="btn btn-primary">Send Package 📦</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg-pattern"></div>
+  <!-- Simplified Lagos skyline -->
+  <svg class="skyline" viewBox="0 0 1400 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <rect x="0" y="100" width="40" height="100" fill="white"/>
+    <rect x="30" y="70" width="30" height="130" fill="white"/>
+    <rect x="80" y="50" width="50" height="150" fill="white"/>
+    <rect x="85" y="30" width="10" height="30" fill="white"/>
+    <rect x="140" y="80" width="35" height="120" fill="white"/>
+    <rect x="185" y="40" width="60" height="160" fill="white"/>
+    <rect x="190" y="20" width="10" height="30" fill="white"/>
+    <rect x="255" y="90" width="30" height="110" fill="white"/>
+    <rect x="295" y="60" width="45" height="140" fill="white"/>
+    <rect x="350" y="30" width="55" height="170" fill="white"/>
+    <rect x="360" y="10" width="8" height="25" fill="white"/>
+    <rect x="415" y="75" width="35" height="125" fill="white"/>
+    <rect x="460" y="45" width="50" height="155" fill="white"/>
+    <rect x="520" y="85" width="30" height="115" fill="white"/>
+    <rect x="560" y="55" width="45" height="145" fill="white"/>
+    <rect x="615" y="25" width="60" height="175" fill="white"/>
+    <rect x="625" y="5" width="10" height="25" fill="white"/>
+    <rect x="685" y="70" width="35" height="130" fill="white"/>
+    <rect x="730" y="40" width="50" height="160" fill="white"/>
+    <rect x="790" y="80" width="30" height="120" fill="white"/>
+    <rect x="830" y="50" width="45" height="150" fill="white"/>
+    <rect x="885" y="30" width="55" height="170" fill="white"/>
+    <rect x="950" y="65" width="40" height="135" fill="white"/>
+    <rect x="1000" y="45" width="50" height="155" fill="white"/>
+    <rect x="1060" y="75" width="35" height="125" fill="white"/>
+    <rect x="1105" y="35" width="60" height="165" fill="white"/>
+    <rect x="1175" y="55" width="45" height="145" fill="white"/>
+    <rect x="1230" y="20" width="55" height="180" fill="white"/>
+    <rect x="1295" y="60" width="40" height="140" fill="white"/>
+    <rect x="1345" y="80" width="55" height="120" fill="white"/>
+  </svg>
+
+  <div class="hero-content">
+    <div>
+      <div class="hero-badge">
+        <span class="live-dot"></span>
+        🇳🇬 Lagos Number 1 Delivery Service
+      </div>
+      <h1>
+        Your Parcel,<br/>
+        <span>Sharp-Sharp!</span><br/>
+        No Story.
+      </h1>
+      <p class="hero-sub">
+        Fast X Nexus connects you to trusted okada riders across Lagos — from Lekki to Ikeja, Ajah to Surulere. Your package gets there, no dulling!
+      </p>
+      <div class="hero-ctas">
+        <a href="/order" class="btn btn-gold btn-lg">📦 Send a Package</a>
+        <a href="https://forms.gle/REPLACE_WITH_YOUR_GOOGLE_FORM" target="_blank" rel="noopener" class="btn btn-outline btn-lg" style="color:white; border-color:white;">🏍️ Signup as a Rider</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num">500+</div>
+          <div class="stat-label">Deliveries Today</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">98%</div>
+          <div class="stat-label">On-Time Rate</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">20+</div>
+          <div class="stat-label">Lagos Areas</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="okada-card">
+        <span class="okada-emoji">🏍️</span>
+        <h3>Okada Rider Near You</h3>
+        <p>Our verified riders are ready to pick up your parcel. Track every step from your phone.</p>
+        <div class="live-badge"><span class="live-dot"></span> Riders Online Now</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-header">
+    <span class="section-tag">Easy like ABC</span>
+    <h2>How It Works — Simple!</h2>
+    <p>Four steps and your parcel dey on the way. No wahala, no stress.</p>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">📝</div>
+      <h4>Fill the Form</h4>
+      <p>Enter pickup, drop-off, and parcel details. E no go take you 2 minutes.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">💰</div>
+      <h4>See Your Price</h4>
+      <p>Choose your service — Standard, Sharp-Sharp, or Same-Day. Price shows immediately.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">🏍️</div>
+      <h4>Rider Comes</h4>
+      <p>Our okada rider swings by to pick up your item. You get an order ID.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">✅</div>
+      <h4>Package Delivered!</h4>
+      <p>Track your order with the ID. We deliver sharp-sharp, no stories.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-header">
+    <span class="section-tag">Pick Your Speed</span>
+    <h2>Our Delivery Services</h2>
+    <p>Whether you dey rush or just taking it easy, we have your back, oga.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card">
+      <span class="service-emoji">📦</span>
+      <div class="service-name">Standard</div>
+      <div class="service-tagline">Steady and reliable</div>
+      <div class="service-price">₦1,200 <span>+ ₦150/kg</span></div>
+      <div class="service-time">⏱ 3–6 hours</div>
+      <div class="service-desc">Cool and collected. Your parcel goes when it goes — no rush, all sure. Perfect for non-urgent deliveries within Lagos.</div>
+    </div>
+    <div class="service-card featured">
+      <span class="service-emoji">⚡</span>
+      <div class="service-name">Sharp-Sharp</div>
+      <div class="service-tagline">No time to waste, oga!</div>
+      <div class="service-price">₦2,500 <span>+ ₦250/kg</span></div>
+      <div class="service-time">⚡ 1–2 hours</div>
+      <div class="service-desc">When e must reach there before anything. We move sharp-sharp, no story. Your fastest option in all of Lagos!</div>
+    </div>
+    <div class="service-card">
+      <span class="service-emoji">🚀</span>
+      <div class="service-name">Same-Day</div>
+      <div class="service-tagline">Today today, before night!</div>
+      <div class="service-price">₦1,800 <span>+ ₦200/kg</span></div>
+      <div class="service-time">📅 4–8 hours</div>
+      <div class="service-desc">Order before 2pm, it reaches before end of day. Guaranteed delivery — no dulling, no excuses.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST SIGNALS -->
+<section class="trust">
+  <div class="section-header">
+    <span class="section-tag" style="background:rgba(244,198,60,0.2); color:var(--gold);">Why Choose Us</span>
+    <h2>You Can Trust Fast X Nexus</h2>
+    <p>We no dey play with your package. Oga, your items are in safe hands.</p>
+  </div>
+  <div class="trust-grid">
+    <div class="trust-card">
+      <div class="trust-icon">🛡️</div>
+      <h4>Verified Riders</h4>
+      <p>Every okada rider is background-checked and trained. No random person touching your parcel.</p>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">📍</div>
+      <h4>All Lagos Areas</h4>
+      <p>Lekki, Ikeja, Yaba, Surulere, Ajah, Gbagada — we cover everywhere! No area too far.</p>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">💬</div>
+      <h4>WhatsApp Support</h4>
+      <p>Got question? Chat us directly on WhatsApp. We respond sharp-sharp, always available.</p>
+    </div>
+    <div class="trust-card">
+      <div class="trust-icon">🔍</div>
+      <h4>Track Your Order</h4>
+      <p>Use your Order ID to check status anytime. From Pending to Delivered — you see everything.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-banner">
+  <h2>Ready to Ship? Make It Happen, Oga! 🚀</h2>
+  <p>Join thousands of Lagosians who trust Fast X Nexus for their daily deliveries.</p>
+  <div class="cta-btns">
+    <a href="/order" class="btn btn-primary btn-lg">📦 Send a Package Now</a>
+    <a href="https://forms.gle/REPLACE_WITH_YOUR_GOOGLE_FORM" target="_blank" rel="noopener" class="btn btn-outline btn-lg">🏍️ Become a Rider</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>⚡ Fast X Nexus Services</h3>
+      <p>Lagos' most reliable okada delivery network. From your doorstep to anywhere in Lagos — sharp-sharp, no dulling. We move, so you don't have to.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <a href="/order">Send a Package</a>
+      <a href="/track">Track Order</a>
+      <a href="https://forms.gle/REPLACE_WITH_YOUR_GOOGLE_FORM" target="_blank">Rider Signup</a>
+      <a href="/admin">Admin Login</a>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="/order">Standard Delivery</a>
+      <a href="/order">Sharp-Sharp Express</a>
+      <a href="/order">Same-Day Delivery</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Fast X Nexus Services, Lagos, Nigeria. Made with 💚 for Lagos.</p>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/2348000000000?text=Hello!%20I%20need%20help%20with%20a%20delivery." class="whatsapp-float" target="_blank" rel="noopener">
+  <span class="whatsapp-icon">💬</span>
+  Chat with us
+</a>
+
+</body>
+</html>

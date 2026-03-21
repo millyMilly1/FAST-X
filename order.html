@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Send a Package — Fast X Nexus Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #1E7A4E; --green-dark: #155c3a; --green-light: #e8f5ed;
+      --gold: #F4C63C; --gold-dark: #d4a520;
+      --white: #ffffff; --grey: #f7f7f5; --text: #111111; --muted: #6b7280;
+      --border: #e5e7eb; --error: #dc2626; --success: #16a34a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; color: var(--text); background: var(--grey); min-height: 100vh; }
+    h1, h2, h3, h4 { font-family: 'Syne', sans-serif; }
+
+    /* NAV */
+    nav {
+      background: white; border-bottom: 1px solid var(--border);
+      padding: 14px 5%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .logo { display: flex; align-items: center; gap: 8px; text-decoration: none;
+      font-family: 'Syne', sans-serif; font-weight: 800; color: var(--green); font-size: 1.1rem; }
+    .logo-icon { width: 32px; height: 32px; background: var(--green); border-radius: 7px;
+      display: flex; align-items: center; justify-content: center; }
+    .nav-back { color: var(--muted); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 4px; }
+    .nav-back:hover { color: var(--green); }
+
+    /* LAYOUT */
+    .page-container {
+      max-width: 1100px; margin: 0 auto; padding: 40px 5%;
+      display: grid; grid-template-columns: 1fr 380px; gap: 28px;
+    }
+
+    /* STEPS PROGRESS */
+    .progress-bar {
+      background: white; border-radius: 14px; padding: 24px 28px;
+      margin-bottom: 24px; border: 1px solid var(--border);
+    }
+    .progress-steps { display: flex; align-items: center; gap: 0; }
+    .prog-step {
+      display: flex; align-items: center; gap: 0; flex: 1;
+    }
+    .prog-step:last-child { flex: none; }
+    .prog-circle {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--border); background: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 600; color: var(--muted);
+      transition: all 0.3s; flex-shrink: 0;
+    }
+    .prog-circle.active { border-color: var(--green); background: var(--green); color: white; }
+    .prog-circle.done { border-color: var(--green); background: var(--green); color: white; }
+    .prog-line { flex: 1; height: 2px; background: var(--border); transition: background 0.3s; }
+    .prog-line.done { background: var(--green); }
+    .prog-label { font-size: 0.75rem; color: var(--muted); margin-top: 6px; }
+    .steps-labels { display: flex; justify-content: space-between; margin-top: 8px; padding: 0 0; }
+    .step-label-item { text-align: center; font-size: 0.72rem; color: var(--muted); font-weight: 500; width: 80px; }
+    .step-label-item.active { color: var(--green); font-weight: 600; }
+
+    /* CARD */
+    .card {
+      background: white; border-radius: 16px; padding: 32px;
+      border: 1px solid var(--border);
+    }
+    .card-title { font-size: 1.3rem; margin-bottom: 6px; }
+    .card-subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 28px; }
+
+    /* FORM */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1/-1; }
+    label { font-size: 0.85rem; font-weight: 600; color: var(--text); }
+    .required { color: var(--error); }
+    input, textarea, select {
+      padding: 12px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem; color: var(--text);
+      background: white; transition: border-color 0.2s;
+      width: 100%;
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none; border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(30,122,78,0.1);
+    }
+    input.error, select.error { border-color: var(--error); }
+    .field-hint { font-size: 0.78rem; color: var(--muted); }
+    textarea { resize: vertical; min-height: 90px; }
+
+    /* SERVICE CARDS */
+    .service-options { display: flex; flex-direction: column; gap: 12px; }
+    .service-option {
+      border: 2px solid var(--border); border-radius: 12px;
+      padding: 16px 18px; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .service-option:hover { border-color: var(--green); background: var(--green-light); }
+    .service-option.selected { border-color: var(--green); background: var(--green-light); }
+    .service-option input[type="radio"] { display: none; }
+    .service-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--border);
+      flex-shrink: 0; transition: all 0.2s; }
+    .service-option.selected .service-radio { border-color: var(--green); background: var(--green); }
+    .service-info { flex: 1; }
+    .service-info-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; }
+    .service-info-time { font-size: 0.78rem; color: var(--muted); }
+    .service-info-price { font-family: 'Syne', sans-serif; font-weight: 800; color: var(--green); }
+
+    /* IMAGE UPLOAD */
+    .upload-area {
+      border: 2px dashed var(--border); border-radius: 12px;
+      padding: 32px; text-align: center; cursor: pointer;
+      transition: all 0.2s; position: relative;
+    }
+    .upload-area:hover { border-color: var(--green); background: var(--green-light); }
+    .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+    .upload-icon { font-size: 2.5rem; margin-bottom: 8px; }
+    .upload-text { font-size: 0.9rem; color: var(--muted); }
+    .upload-preview { display: none; }
+    .upload-preview img { max-height: 150px; border-radius: 8px; margin-top: 12px; }
+
+    /* SUMMARY */
+    .summary-card { border: 2px solid var(--green-light); border-radius: 16px; padding: 28px; background: var(--green-light); }
+    .summary-row {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid rgba(30,122,78,0.12);
+      gap: 12px;
+    }
+    .summary-row:last-child { border: none; }
+    .summary-label { font-size: 0.82rem; color: var(--muted); font-weight: 500; flex-shrink: 0; width: 120px; }
+    .summary-value { font-size: 0.9rem; color: var(--text); font-weight: 500; text-align: right; }
+    .price-total {
+      background: var(--green); border-radius: 12px; padding: 18px 20px;
+      display: flex; justify-content: space-between; align-items: center; margin-top: 16px;
+    }
+    .price-label { color: rgba(255,255,255,0.8); font-size: 0.85rem; }
+    .price-value { font-family: 'Syne', sans-serif; color: white; font-size: 1.8rem; font-weight: 800; }
+
+    /* SIDEBAR */
+    .sidebar { display: flex; flex-direction: column; gap: 16px; }
+    .price-preview {
+      background: white; border-radius: 16px; padding: 24px;
+      border: 1px solid var(--border); position: sticky; top: 20px;
+    }
+    .price-preview h4 { margin-bottom: 16px; font-size: 1rem; }
+    .price-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.88rem; }
+    .price-row.total {
+      border-top: 2px solid var(--border); margin-top: 8px;
+      padding-top: 12px; font-weight: 700; font-size: 1rem;
+    }
+    .big-price {
+      font-family: 'Syne', sans-serif; font-size: 2.2rem;
+      font-weight: 800; color: var(--green); text-align: center;
+      margin: 12px 0;
+    }
+    .time-badge {
+      background: var(--gold); color: var(--green-dark);
+      border-radius: 8px; padding: 8px 12px; text-align: center;
+      font-size: 0.82rem; font-weight: 600; margin-top: 8px;
+    }
+    .trust-mini { font-size: 0.78rem; color: var(--muted); text-align: center; margin-top: 12px; line-height: 1.6; }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 14px 28px; border-radius: 9px;
+      font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600;
+      cursor: pointer; text-decoration: none; border: none;
+      transition: all 0.2s; width: 100%;
+    }
+    .btn-primary { background: var(--green); color: white; }
+    .btn-primary:hover { background: var(--green-dark); box-shadow: 0 4px 20px rgba(30,122,78,0.3); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-outline { background: transparent; color: var(--green); border: 2px solid var(--green); }
+    .btn-outline:hover { background: var(--green-light); }
+    .btn-row { display: flex; gap: 12px; margin-top: 28px; }
+    .btn-row .btn { flex: 1; }
+
+    /* STEPS */
+    .step-section { display: none; }
+    .step-section.active { display: block; }
+
+    /* CONFIRMATION */
+    .confirm-screen {
+      text-align: center; padding: 48px 32px;
+    }
+    .confirm-icon { font-size: 5rem; margin-bottom: 16px; animation: bounceIn 0.5s ease-out; }
+    @keyframes bounceIn {
+      0% { transform: scale(0.5); opacity: 0; }
+      70% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .confirm-screen h2 { font-size: 1.8rem; color: var(--green); margin-bottom: 8px; }
+    .confirm-screen p { color: var(--muted); margin-bottom: 24px; font-size: 1rem; }
+    .order-id-box {
+      background: var(--green-light); border: 2px solid var(--green);
+      border-radius: 12px; padding: 20px 28px; margin: 20px auto;
+      max-width: 320px; display: inline-block;
+    }
+    .order-id-label { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .order-id-value { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--green); letter-spacing: 2px; }
+    .confirm-details { text-align: left; max-width: 400px; margin: 24px auto; }
+    .confirm-details .summary-card { background: white; }
+    .copy-btn { background: transparent; border: 1px solid var(--green); color: var(--green);
+      padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
+      font-family: 'DM Sans', sans-serif; margin-top: 8px; }
+    .confirm-actions { display: flex; gap: 12px; justify-content: center; margin-top: 28px; flex-wrap: wrap; }
+    .confirm-actions .btn { width: auto; min-width: 160px; }
+
+    /* ERROR */
+    .error-msg { color: var(--error); font-size: 0.78rem; margin-top: 2px; display: none; }
+    .error-msg.show { display: block; }
+    .form-error-banner {
+      background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px;
+      padding: 12px 16px; color: var(--error); font-size: 0.88rem;
+      margin-bottom: 16px; display: none;
+    }
+    .form-error-banner.show { display: block; }
+
+    @media (max-width: 768px) {
+      .page-container { grid-template-columns: 1fr; }
+      .sidebar { order: -1; }
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: 1; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo"><div class="logo-icon">⚡</div> FAST X NEXUS</a>
+  <a href="/" class="nav-back">← Back to Home</a>
+</nav>
+
+<div class="page-container">
+  <!-- MAIN FORM AREA -->
+  <div>
+    <!-- Progress -->
+    <div class="progress-bar">
+      <div class="progress-steps">
+        <div class="prog-step">
+          <div class="prog-circle active" id="prog-1">1</div>
+          <div class="prog-line" id="line-1"></div>
+        </div>
+        <div class="prog-step">
+          <div class="prog-circle" id="prog-2">2</div>
+          <div class="prog-line" id="line-2"></div>
+        </div>
+        <div class="prog-step">
+          <div class="prog-circle" id="prog-3">3</div>
+        </div>
+      </div>
+      <div class="steps-labels">
+        <div class="step-label-item active" id="label-1">Parcel Details</div>
+        <div class="step-label-item" id="label-2">Service & Price</div>
+        <div class="step-label-item" id="label-3">Confirm Order</div>
+      </div>
+    </div>
+
+    <!-- STEP 1: Parcel Details -->
+    <div class="step-section active card" id="step-1">
+      <h2 class="card-title">📦 Tell Us About Your Parcel</h2>
+      <p class="card-subtitle">Fill in the details — no shakara, just the facts!</p>
+
+      <div class="form-error-banner" id="step1-error">Oga, abeg fill all the required fields before continuing!</div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Your Name <span class="required">*</span></label>
+          <input type="text" id="customerName" placeholder="e.g. Chukwuemeka Obi" />
+          <span class="error-msg" id="err-customerName">Name is required</span>
+        </div>
+        <div class="form-group">
+          <label>Phone Number <span class="required">*</span></label>
+          <input type="tel" id="phone" placeholder="e.g. 08031234567" />
+          <span class="error-msg" id="err-phone">Enter a valid Nigerian phone number</span>
+        </div>
+        <div class="form-group full">
+          <label>Pickup Address <span class="required">*</span></label>
+          <input type="text" id="pickupAddress" placeholder="e.g. 14 Herbert Macaulay Way, Yaba, Lagos" />
+          <span class="error-msg" id="err-pickupAddress">Pickup address is required</span>
+        </div>
+        <div class="form-group full">
+          <label>Drop-off Address <span class="required">*</span></label>
+          <input type="text" id="dropoffAddress" placeholder="e.g. 52 Admiralty Way, Lekki Phase 1, Lagos" />
+          <span class="error-msg" id="err-dropoffAddress">Drop-off address is required</span>
+        </div>
+        <div class="form-group full">
+          <label>Item Description <span class="required">*</span></label>
+          <textarea id="itemDescription" placeholder="Describe what's inside — e.g. 'electronics — laptop charger', 'clothing — 2 dresses', 'documents — contract papers'"></textarea>
+          <span class="error-msg" id="err-itemDescription">Tell us what you're sending</span>
+        </div>
+        <div class="form-group">
+          <label>Approximate Weight (kg) <span class="required">*</span></label>
+          <input type="number" id="weight" placeholder="e.g. 2" min="0.1" step="0.1" />
+          <span class="field-hint">Weight affects pricing</span>
+          <span class="error-msg" id="err-weight">Enter weight in kg</span>
+        </div>
+        <div class="form-group">
+          <label>Parcel Size</label>
+          <select id="size">
+            <option value="Small">Small (shoe box size)</option>
+            <option value="Medium" selected>Medium (backpack size)</option>
+            <option value="Large">Large (suitcase size)</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Photo of Parcel (optional)</label>
+          <div class="upload-area" id="upload-area">
+            <input type="file" id="parcelImage" accept="image/*" onchange="handleImageUpload(this)" />
+            <div class="upload-icon">📸</div>
+            <div class="upload-text">Tap to upload a photo of your parcel<br/><small>JPG, PNG — optional but helpful</small></div>
+          </div>
+          <div class="upload-preview" id="upload-preview">
+            <img id="preview-img" src="" alt="Parcel preview" />
+            <div style="font-size:0.8rem;color:var(--muted);margin-top:4px;">✅ Photo added!</div>
+          </div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="goToStep2()">Continue → Choose Service</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Service Selection -->
+    <div class="step-section card" id="step-2">
+      <h2 class="card-title">⚡ Choose Your Delivery Speed</h2>
+      <p class="card-subtitle">How fast you want am? Pick wisely, oga!</p>
+
+      <div class="service-options" id="service-options">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="goToStep(1)">← Back</button>
+        <button class="btn btn-primary" onclick="goToStep3()">Review Order →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: Confirm -->
+    <div class="step-section card" id="step-3">
+      <h2 class="card-title">✅ Review Your Order</h2>
+      <p class="card-subtitle">Double-check everything before we dispatch the okada!</p>
+
+      <div class="summary-card" id="order-summary">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="price-total" id="total-price-bar">
+        <div>
+          <div class="price-label">Total Price</div>
+          <div style="color:rgba(255,255,255,0.7);font-size:0.78rem;">Includes base fee + weight</div>
+        </div>
+        <div class="price-value" id="confirm-total">₦0</div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-outline" onclick="goToStep(2)">← Edit</button>
+        <button class="btn btn-primary" id="submit-btn" onclick="submitOrder()">
+          🏍️ Place Order!
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 4: Confirmation -->
+    <div class="step-section card" id="step-4">
+      <div class="confirm-screen">
+        <div class="confirm-icon">🎉</div>
+        <h2>Order Placed! E don set!</h2>
+        <p>Your okada rider don receive the request. Save your Order ID — you go need am to track your parcel!</p>
+        <div class="order-id-box">
+          <div class="order-id-label">Your Order ID</div>
+          <div class="order-id-value" id="confirm-order-id">—</div>
+          <button class="copy-btn" onclick="copyOrderId()">📋 Copy ID</button>
+        </div>
+        <div class="confirm-details">
+          <div class="summary-card" id="confirm-details-summary"></div>
+        </div>
+        <div class="confirm-actions">
+          <a href="/track" class="btn btn-primary">🔍 Track My Order</a>
+          <a href="/" class="btn btn-outline">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="price-preview">
+      <h4>💰 Live Price Estimate</h4>
+      <div id="price-no-selection" style="text-align:center; color:var(--muted); font-size:0.9rem; padding:16px 0;">
+        Select a service type to see your price
+      </div>
+      <div id="price-display" style="display:none;">
+        <div class="price-row">
+          <span>Base fee:</span><span id="side-base">—</span>
+        </div>
+        <div class="price-row">
+          <span>Weight charge:</span><span id="side-weight-charge">—</span>
+        </div>
+        <div class="price-row total">
+          <span>Total</span><span id="side-total">—</span>
+        </div>
+        <div class="big-price" id="side-big-price">₦0</div>
+        <div class="time-badge" id="side-time">⏱ Select a service</div>
+      </div>
+      <div class="trust-mini">
+        🛡️ Safe & secure delivery<br/>
+        📍 All Lagos areas covered<br/>
+        💬 WhatsApp support available
+      </div>
+    </div>
+
+    <div class="card" style="padding:20px;">
+      <div style="font-size:0.78rem; color:var(--muted); line-height:1.7;">
+        <strong style="color:var(--text)">📞 Need help?</strong><br/>
+        WhatsApp us anytime — we respond sharp-sharp!<br/><br/>
+        <a href="https://wa.me/2348000000000" target="_blank"
+          style="background:var(--green);color:white;padding:8px 16px;border-radius:8px;text-decoration:none;font-size:0.82rem;font-weight:600;display:inline-block;">
+          💬 Chat on WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let services = [];
+  let selectedService = null;
+  let currentStep = 1;
+  let hasImage = false;
+  let confirmedOrderId = '';
+
+  async function loadServices() {
+    try {
+      const res = await fetch('/api/services');
+      const data = await res.json();
+      services = data.data;
+      renderServiceOptions();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function renderServiceOptions() {
+    const container = document.getElementById('service-options');
+    container.innerHTML = services.map(s => `
+      <div class="service-option ${selectedService?.id === s.id ? 'selected' : ''}"
+           onclick="selectService('${s.id}')">
+        <div class="service-radio"></div>
+        <div class="service-info" style="flex:1;">
+          <div class="service-info-name">${s.emoji} ${s.name}</div>
+          <div class="service-info-time">⏱ ${s.estimatedTime} · ${s.tagline}</div>
+          <div style="font-size:0.8rem;color:var(--muted);margin-top:2px;">${s.description}</div>
+        </div>
+        <div class="service-info-price">
+          ₦${s.basePrice.toLocaleString()}<br/>
+          <span style="font-size:0.72rem;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;">+₦${s.pricePerKg}/kg</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function selectService(id) {
+    selectedService = services.find(s => s.id === id);
+    renderServiceOptions();
+    updatePricePreview();
+  }
+
+  function getWeight() {
+    return parseFloat(document.getElementById('weight').value) || 0;
+  }
+
+  function calcPrice(service) {
+    if (!service) return 0;
+    return service.basePrice + service.pricePerKg * Math.max(getWeight(), 0.1);
+  }
+
+  function updatePricePreview() {
+    const noSel = document.getElementById('price-no-selection');
+    const display = document.getElementById('price-display');
+    if (!selectedService) {
+      noSel.style.display = 'block';
+      display.style.display = 'none';
+      return;
+    }
+    noSel.style.display = 'none';
+    display.style.display = 'block';
+    const weight = getWeight();
+    const weightCharge = selectedService.pricePerKg * Math.max(weight, 0.1);
+    const total = selectedService.basePrice + weightCharge;
+    document.getElementById('side-base').textContent = '₦' + selectedService.basePrice.toLocaleString();
+    document.getElementById('side-weight-charge').textContent = '₦' + Math.round(weightCharge).toLocaleString();
+    document.getElementById('side-total').textContent = '₦' + Math.round(total).toLocaleString();
+    document.getElementById('side-big-price').textContent = '₦' + Math.round(total).toLocaleString();
+    document.getElementById('side-time').textContent = '⏱ ' + selectedService.estimatedTime;
+  }
+
+  document.getElementById('weight').addEventListener('input', updatePricePreview);
+
+  function validateStep1() {
+    const fields = {
+      customerName: 'err-customerName',
+      phone: 'err-phone',
+      pickupAddress: 'err-pickupAddress',
+      dropoffAddress: 'err-dropoffAddress',
+      itemDescription: 'err-itemDescription',
+      weight: 'err-weight'
+    };
+    let valid = true;
+    for (const [id, errId] of Object.entries(fields)) {
+      const el = document.getElementById(id);
+      const err = document.getElementById(errId);
+      if (!el.value.trim()) {
+        el.classList.add('error');
+        err.classList.add('show');
+        valid = false;
+      } else {
+        el.classList.remove('error');
+        err.classList.remove('show');
+      }
+    }
+    document.getElementById('step1-error').classList.toggle('show', !valid);
+    return valid;
+  }
+
+  function goToStep2() {
+    if (!validateStep1()) return;
+    updatePricePreview();
+    goToStep(2);
+  }
+
+  function goToStep3() {
+    if (!selectedService) {
+      alert('Oga, abeg select a service type!');
+      return;
+    }
+    renderSummary();
+    goToStep(3);
+  }
+
+  function goToStep(n) {
+    document.querySelectorAll('.step-section').forEach(el => el.classList.remove('active'));
+    document.getElementById('step-' + n).classList.add('active');
+    currentStep = n;
+    updateProgress(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function updateProgress(n) {
+    for (let i = 1; i <= 3; i++) {
+      const circle = document.getElementById('prog-' + i);
+      const label = document.getElementById('label-' + i);
+      circle.classList.remove('active', 'done');
+      label.classList.remove('active');
+      if (i < n) { circle.classList.add('done'); circle.textContent = '✓'; }
+      else if (i === n) { circle.classList.add('active'); circle.textContent = i; label.classList.add('active'); }
+      else { circle.textContent = i; }
+    }
+    for (let i = 1; i <= 2; i++) {
+      const line = document.getElementById('line-' + i);
+      if (line) line.classList.toggle('done', i < n);
+    }
+  }
+
+  function renderSummary() {
+    const s = selectedService;
+    const weight = getWeight();
+    const total = calcPrice(s);
+    const rows = [
+      ['Customer', document.getElementById('customerName').value],
+      ['Phone', document.getElementById('phone').value],
+      ['Pickup', document.getElementById('pickupAddress').value],
+      ['Drop-off', document.getElementById('dropoffAddress').value],
+      ['Item', document.getElementById('itemDescription').value],
+      ['Weight', weight + ' kg'],
+      ['Size', document.getElementById('size').value],
+      ['Service', s.emoji + ' ' + s.name + ' (' + s.estimatedTime + ')'],
+    ];
+    document.getElementById('order-summary').innerHTML = rows.map(([l, v]) =>
+      `<div class="summary-row"><span class="summary-label">${l}</span><span class="summary-value">${v || '—'}</span></div>`
+    ).join('');
+    document.getElementById('confirm-total').textContent = '₦' + Math.round(total).toLocaleString();
+  }
+
+  async function submitOrder() {
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Placing order...';
+    const payload = {
+      customerName: document.getElementById('customerName').value,
+      phone: document.getElementById('phone').value,
+      pickupAddress: document.getElementById('pickupAddress').value,
+      dropoffAddress: document.getElementById('dropoffAddress').value,
+      itemDescription: document.getElementById('itemDescription').value,
+      weight: document.getElementById('weight').value,
+      size: document.getElementById('size').value,
+      serviceType: selectedService.id,
+      hasImage,
+    };
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (data.success) {
+        confirmedOrderId = data.data.id;
+        showConfirmation(data.data);
+      } else {
+        alert(data.message || 'Something went wrong!');
+        btn.disabled = false;
+        btn.textContent = '🏍️ Place Order!';
+      }
+    } catch (e) {
+      alert('Network error! Check your connection.');
+      btn.disabled = false;
+      btn.textContent = '🏍️ Place Order!';
+    }
+  }
+
+  function showConfirmation(order) {
+    document.getElementById('confirm-order-id').textContent = order.id;
+    const details = [
+      ['Service', selectedService.emoji + ' ' + selectedService.name],
+      ['Estimated Time', order.estimatedTime],
+      ['Pickup', order.pickupAddress],
+      ['Drop-off', order.dropoffAddress],
+      ['Total', '₦' + order.price.toLocaleString()],
+    ];
+    document.getElementById('confirm-details-summary').innerHTML = details.map(([l, v]) =>
+      `<div class="summary-row"><span class="summary-label">${l}</span><span class="summary-value">${v}</span></div>`
+    ).join('');
+    // Show step 4 manually (no progress bar update)
+    document.querySelectorAll('.step-section').forEach(el => el.classList.remove('active'));
+    document.getElementById('step-4').classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function copyOrderId() {
+    navigator.clipboard.writeText(confirmedOrderId);
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy ID', 2000);
+  }
+
+  function handleImageUpload(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('preview-img').src = e.target.result;
+        document.getElementById('upload-preview').style.display = 'block';
+        document.getElementById('upload-area').style.display = 'none';
+        hasImage = true;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
+  loadServices();
+</script>
+</body>
+</html>
