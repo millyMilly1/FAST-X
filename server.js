@@ -5,7 +5,8 @@ const path = require('path');
 const db = require('./data/db');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
+const HOST = '0.0.0.0';
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
@@ -68,12 +69,12 @@ app.get('/track', (req, res) => res.sendFile(path.join(__dirname, 'public', 'tra
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
 
 // ─── Start ────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
   console.log(`
 ╔══════════════════════════════════════════════════╗
-║   🚀 FAST X NEXUS SERVICES — Server Running!    ║
+║   FAST X NEXUS SERVICES — Server Running!        ║
 ║   Port: ${PORT}                                      ║
-║   Lagos logistics, sharp-sharp! 💚              ║
+║   Lagos logistics, sharp-sharp!                  ║
 ╚══════════════════════════════════════════════════╝
   `);
 });
