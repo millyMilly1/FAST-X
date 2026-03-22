@@ -53,14 +53,6 @@ fastxnexus/
 
 ---
 
-## ✏️ Things to Customize
-
-1. **WhatsApp number** — Replace `2348000000000` in `index.html`, `order.html`, and `track.html`
-2. **Rider Google Form** — Replace `https://forms.gle/REPLACE_WITH_YOUR_GOOGLE_FORM` in `index.html`
-3. **Service prices** — Edit `SERVICE_TYPES` array in `data/db.js`
-4. **Admin URL** — Currently public at `/admin` — add a password check when ready
-
----
 
 ## 🧠 Notes
 
